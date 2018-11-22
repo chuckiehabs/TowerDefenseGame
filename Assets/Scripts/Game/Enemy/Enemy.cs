@@ -72,7 +72,9 @@ public class Enemy : MonoBehaviour
         {
             UpdateMovement();
         }
-        else { //2
+        //2
+        else
+        { 
             OnGotToLastWayPoint();
         }
     }
@@ -85,7 +87,8 @@ public class Enemy : MonoBehaviour
         //4
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
         //5
-        transform.LookAt(targetPosition);
+        transform.localRotation = UtilityMethods.SmoothlyLook(transform, targetPosition);
+       
         //6
         if (Vector3.Distance(transform.position, targetPosition) < 1f)
         {
