@@ -10,8 +10,10 @@ public class StoneTower :  Tower
     protected override void AttackEnemy()
     {
         base.AttackEnemy();
-        //3
+        // makes the tower shoot stones using the default quaternion rotations
         GameObject stone = (GameObject)Instantiate(stonePrefab, towerPieceToAim.position, Quaternion.identity);
+        stone.GetComponent<Stone>().enemyToFollow = targetEnemy;
+        stone.GetComponent<Stone>().damage = attackPower;
     }
 
 }
