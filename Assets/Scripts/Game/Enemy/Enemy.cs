@@ -41,40 +41,53 @@ public class Enemy : MonoBehaviour
 
     private int wayPointIndex = 0;
 
+     void Start()
+    {
+        EnemyManager.Instance.RegisterEnemy(this);
+    }
     void OnGotToLastWayPoint()
     {
+        GameManager.Instance.OnEnemyEscape();
         Die();
     }
 
     public void TakeDamage(float amountOfDamage)
     {
         health -= amountOfDamage;
-
+        DropGold();
         if (health <= 0)
         {
             Die();
         }
     }
 
-
+    void DropGold()
+    {
+        GameManager.Instance.gold += goldDrop;
+    }
     void Die()
     {
         if (gameObject != null)
-        {
-            Destroy(gameObject);
-        }
+        //1
+        EnemyManager.Instance.UnRegister(this);
+        //2
+        gameObject.AddComponent<AutoScaler>().scaleSpeed = -2;
+        //3
+        enabled = false;
+        //4
+        Destroy(gameObject, 0.3f);
     }
 
-     void Update()
+    void Update()
     {
         //1
-        if (wayPointIndex < WaypointManager.Instance.Paths[pathIndex].WayPoints.Count)
+        if (wayPointIndex <
+       WayPointManager.Instance.Paths[pathIndex].WayPoints.Count)
         {
             UpdateMovement();
         }
-        //2
         else
-        { 
+        { // 2
             OnGotToLastWayPoint();
         }
     }
@@ -82,15 +95,17 @@ public class Enemy : MonoBehaviour
     private void UpdateMovement()
     {
         //3
-        Vector3 targetPosition = WaypointManager.Instance.Paths[pathIndex].WayPoints[wayPointIndex].position;
-
+        Vector3 targetPosition =
+        WayPointManager.Instance.Paths[pathIndex]
+        .WayPoints[wayPointIndex].position;
         //4
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(
+        transform.position, targetPosition,
+        moveSpeed * Time.deltaTime);
         //5
-        transform.localRotation = UtilityMethods.SmoothlyLook(transform, targetPosition);
-       
+        transform.LookAt(targetPosition);
         //6
-        if (Vector3.Distance(transform.position, targetPosition) < 1f)
+        if (Vector3.Distance(transform.position, targetPosition) < .1f)
         {
             wayPointIndex++;
         }
